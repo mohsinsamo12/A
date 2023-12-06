@@ -1,0 +1,29 @@
+import requests
+from bs4 import BeautifulSoup
+
+def scrape_website(url):
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.content, "html.parser")
+
+        # Extracting product details
+        for product in soup.find_all("div", class_="product"):
+            product_name = product.find("h2", class_="product-title").text.strip()
+            product_price = product.find("span", class_="price").text.strip()
+            product_description = product.find("div", class_="description").text.strip()
+
+            # If the product has multiple images linked to it, extract those links
+            images = [img['src'] for img in product.find_all('img')]
+
+            # Print or store the extracted data as needed
+            print("Product Name:", product_name)
+            print("Product Price:", product_price)
+            print("Product Description:", product_description)
+            print("Product Images:", images)
+            print("\n")
+    else:
+        print("Failed to retrieve the webpage. Status code:", response.status_code)
+
+# Example usage
+scrape_website("https://amberstore.pk/")
